@@ -41,11 +41,11 @@ exports.getReviews = (req, res, next) => {
 
 exports.getComments = (req, res, next) => {
     const { review_id } = req.params;
-   const commentsResult = selectComments(review_id)
-   const validArtcleId = selectReviewById(review_id)
-    Promise.all([commentsResult, validArtcleId ])
+    const commentsResult = selectComments(review_id)
+    const validArtcleId = selectReviewById(review_id)
+    Promise.all([commentsResult, validArtcleId])
         .then(([response]) => {
-            
+
             res.status(200).send({ comments: response });
         })
         .catch((err) => {
