@@ -57,8 +57,3 @@ exports.selectComments = (review_id) => {
 }
 
 // 5.
-
-//  } else if (review_id !== res.rows.review_id) {
-
-//     return Promise.reject(res.status(404).send('Not found"'))
-// }
