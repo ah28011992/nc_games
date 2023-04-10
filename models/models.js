@@ -43,7 +43,7 @@ exports.selectAllReviews = () => {
 };
 
 
-4.// /api/reviews /: review_id /
+4.// /api/reviews /: review_id / comments
 exports.selectComments = (review_id) => {
 
 
@@ -58,7 +58,40 @@ exports.selectComments = (review_id) => {
 
 // 5.
 
-//  } else if (review_id !== res.rows.review_id) {
-
-//     return Promise.reject(res.status(404).send('Not found"'))
-// }
+// POST 
+exports.addComments = (review_id, username, body) => {
+    const idNum = parseInt(review_id);
+   
+        return db
+            .query(`SELECT * FROM reviews WHERE review_id = $1;`, [review_id])
+            .then((result) => {
+                if (result.rows.length === 0) {
+                    return Promise.reject({
+                        status: 404,
+                        msg: 'Please provide a valid review_id'
+                    });
+                } else {
+                    return db
+                        .query(`SELECT * FROM users WHERE username = $1;`, [username])
+                        .then((result) => {
+                            if (result.rows.length === 0) {
+                                return Promise.reject({
+                                    status: 404,
+                                    msg: 'Please provide a valid username'
+                                });
+                            } else {
+                                return db
+                                    .query(
+                                        `INSERT INTO comments (review_id, author, body) VALUES ($1, $2, $3) RETURNING *;`,
+                                        [review_id, username, body]
+                                    )
+                                    .then((result) => {
+                                        return result.rows;
+                                    })
+                                   
+                            } 
+                        });
+                }
+            });
+    } 
+    

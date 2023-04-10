@@ -107,7 +107,7 @@ describe('app', () => {
         });
 
     })
-    describe('/api/reviews/:review_id/comments', () => {
+    describe('GET /api/reviews/:review_id/comments', () => {
         test('200:responds with an array of comments for the given review_id', () => {
             return request(app)
                 .get('/api/reviews/2/comments')
@@ -158,6 +158,59 @@ describe('app', () => {
                     expect(res.body.msg).toBe("No review exists with that ID");
                 });
         });
+    })
+
+
+    describe('POST /api/reviews/:review_id/comments', () => {
+        test('responds with 201 with the posted comment', () => {
+            return request(app)
+                .post('/api/reviews/1/comments')
+                .send({ username: 'bainesface', body: 'It is okay' })
+                .expect(201)
+                .then((res) => {
+                    const { comment } = res.body;
+                    expect(comment).toHaveLength(1);
+                    comment.forEach((result) => {
+                        expect(result).toEqual(
+                            expect.objectContaining({
+                                comment_id: expect.any(Number),
+                                votes: expect.any(Number),
+                                created_at: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String)
+                            })
+                        );
+                    });
+                });
+        });
+        test('responds with 404 when given a non existent review_id', () => {
+            return request(app)
+                .post('/api/reviews/9999999/comments')
+                .send({ username: 'bainesface', body: 'It is okay' })
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Please provide a valid review_id');
+                });
+
+        });
+        test('responds with 404 when given an invalid username', () => {
+            return request(app)
+                .post('/api/reviews/3/comments')
+                .send({ username: 'nonsense', body: 'It is okay' })
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Please provide a valid username');
+                });
+        })
+        test('responds with 400 when given an invalid type', () => {
+            return request(app)
+                .post('/api/reviews/nonsense/comments')
+                .send({ username: 'bainesface', body: 'It is okay' })
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Bad request');
+                });
+        })
     })
 
 })
