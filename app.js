@@ -1,7 +1,7 @@
 const express = require('express')
 const { handleCustomErrors, PSQL400Errors, handleServerErrors } = require('./index')
+const { getAllCategories, getReviewById, getReviews, getComments, postComments } = require('./controllers/controllers')
 
-const { getAllCategories, getReviewById, getReviews, getComments } = require('./controllers/controllers')
 
 const app = express()
 
@@ -10,16 +10,21 @@ app.get('/api/categories', getAllCategories)
 app.get('/api/reviews/:review_id', getReviewById)
 app.get('/api/reviews', getReviews)
 app.get('/api/reviews/:review_id/comments', getComments)
+app.use(express.json())
+app.post('/api/reviews/:review_id/comments', postComments)
+
+// Post 
+
 
 // MW
 
 app.all('*', (req, res) => {
 
-    res.status(404).send({ msg: 'Not found' })
+  res.status(404).send({ msg: 'Not found' })
 })
 
 app.all('*', (req, res) => {
-    res.status(400).send({ msg: 'Bad request' })
+  res.status(400).send({ msg: 'Bad request' })
 })
 
 

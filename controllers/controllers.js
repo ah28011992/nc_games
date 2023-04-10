@@ -1,4 +1,4 @@
-const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, selectComments } = require('../models/models')
+const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, selectComments, addComments, addCommentByReviewId } = require('../models/models')
 //1. '/api/categories'
 exports.getAllCategories = (req, res, next) => {
     fetchAllCategories()
@@ -36,7 +36,7 @@ exports.getReviews = (req, res, next) => {
             next(err);
         });
 }
-
+//GET
 // 4. /api/reviews/:review_id/comments
 
 exports.getComments = (req, res, next) => {
@@ -52,3 +52,23 @@ exports.getComments = (req, res, next) => {
             next(err)
         });
 }
+
+
+// POST 
+// /api/reviews /: review_id / comments
+
+exports.postComments = (req, res, next) => {
+    const { review_id } = req.params;
+    const { username, body } = req.body;
+    addComments(review_id, username, body)
+        .then((response) => {
+            res.status(201).send({ comment: response });
+        })
+        .catch((err) => {
+            if (err.status === 404) {
+                res.status(404).send({ msg: err.msg });
+            } else {
+                next(err);
+            }
+        });
+};
