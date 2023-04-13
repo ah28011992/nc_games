@@ -1,17 +1,21 @@
 const express = require('express')
 const { handleCustomErrors, PSQL400Errors, handleServerErrors } = require('./index')
-const { getAllCategories, getReviewById, getReviews, getComments, postComments } = require('./controllers/controllers')
+const { getAllCategories, getReviewById, getReviews, getComments, postComments,patchVotes } = require('./controllers/controllers')
+
+const cors = require('cors');
 
 
 const app = express()
+app.use(express.json())
+app.use(cors());
 
 // GET
 app.get('/api/categories', getAllCategories)
 app.get('/api/reviews/:review_id', getReviewById)
 app.get('/api/reviews', getReviews)
 app.get('/api/reviews/:review_id/comments', getComments)
-app.use(express.json())
 app.post('/api/reviews/:review_id/comments', postComments)
+
 
 // Post 
 
@@ -26,6 +30,7 @@ app.all('*', (req, res) => {
 app.all('*', (req, res) => {
   res.status(400).send({ msg: 'Bad request' })
 })
+
 
 
 // Error handlers

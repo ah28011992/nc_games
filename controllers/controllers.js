@@ -1,4 +1,4 @@
-const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, selectComments, addComments, addCommentByReviewId } = require('../models/models')
+const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, selectComments, addComments, addCommentByReviewId, updateVotes } = require('../models/models')
 //1. '/api/categories'
 exports.getAllCategories = (req, res, next) => {
     fetchAllCategories()
@@ -24,6 +24,8 @@ exports.getReviewById = (req, res, next) => {
             next(err);
         });
 };
+
+
 
 //3. /api/reviews', 
 
@@ -72,3 +74,5 @@ exports.postComments = (req, res, next) => {
             }
         });
 };
+
+
