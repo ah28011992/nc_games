@@ -3,6 +3,7 @@ const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, s
 exports.getAllCategories = (req, res, next) => {
     fetchAllCategories()
         .then((categories) => {
+           
             res.status(200).send(categories);
 
         })
@@ -74,5 +75,14 @@ exports.postComments = (req, res, next) => {
             }
         });
 };
-
-
+exports.patchVotes = (req, res, next) => {
+    const { review_id } = req.params;
+    const { inc_votes } = req.body;
+    updateVotes(review_id, inc_votes)
+        .then((response) => {
+            console.log(response)
+            
+            res.status(200).send({ updated_review: response });
+        })
+        .catch((err) => next(err));
+};

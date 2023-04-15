@@ -97,5 +97,31 @@ exports.addComments = (review_id, username, body) => {
         });
 }
 
-
+exports.updateVotes = (review_id, inc_votes) => {
+    const idNum = parseInt(review_id);
+    if (!Number.isNaN(idNum)) {
+        return db
+            .query(`SELECT votes FROM reviews WHERE review_id = $1;`, [review_id])
+            .then((result) => {
+                if (result.rows.length === 0 || typeof inc_votes !== 'number') {
+                    return Promise.reject({ status: 400, msg: 'Invalid request' });
+                } else {
+                    const newVotes = result.rows[0].votes + inc_votes;
+                    return db
+                        .query(
+                            `UPDATE reviews SET votes = $1 WHERE review_id = $2 RETURNING *;`,
+                            [newVotes, review_id]
+                        )
+                        .then((result) => {
+                            return result.rows[0];
+                        });
+                }
+            });
+    } else {
+        return Promise.reject({
+            status: 400,
+            msg: 'Bad request'
+        });
+    }
+};
 

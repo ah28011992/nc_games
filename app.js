@@ -15,6 +15,7 @@ app.get('/api/reviews/:review_id', getReviewById)
 app.get('/api/reviews', getReviews)
 app.get('/api/reviews/:review_id/comments', getComments)
 app.post('/api/reviews/:review_id/comments', postComments)
+app.patch('/api/reviews/:review_id', patchVotes)
 
 
 // Post 

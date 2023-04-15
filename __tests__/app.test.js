@@ -160,4 +160,121 @@ describe('app', () => {
             });
         })
     })
+    describe('POST /api/reviews/:review_id/comments', () => {
+        test('responds with 201 with the posted comment', () => {
+            return request(app)
+                .post('/api/reviews/1/comments')
+                .send({ username: 'bainesface', body: 'It is okay' })
+                .expect(201)
+                .then((res) => {
+                    const { comment } = res.body;
+                    expect(comment).toHaveLength(1);
+                    comment.forEach((result) => {
+                        expect(result).toEqual(
+                            expect.objectContaining({
+                                comment_id: expect.any(Number),
+                                votes: expect.any(Number),
+                                created_at: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String)
+                            })
+                        );
+                    });
+                });
+        });
+        test('responds with 404 when given a non existent review_id', () => {
+            return request(app)
+                .post('/api/reviews/9999999/comments')
+                .send({ username: 'bainesface', body: 'It is okay' })
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Please provide a valid review_id');
+                });
+
+        });
+        test('responds with 404 when given an invalid username', () => {
+            return request(app)
+                .post('/api/reviews/3/comments')
+                .send({ username: 'nonsense', body: 'It is okay' })
+                .expect(404)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Please provide a valid username');
+                });
+        })
+        test('responds with 400 when given an invalid type', () => {
+            return request(app)
+                .post('/api/reviews/nonsense/comments')
+                .send({ username: 'bainesface', body: 'It is okay' })
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Bad request');
+                });
+        })
+    })
+    describe('PATCH /api/reviews/:review_id', () => {
+        test('responds with 200 and updated review - incrementing the vote', () => {
+            return request(app)
+                .patch('/api/reviews/1')
+                .send({ inc_votes: 2 })
+                .expect(200)
+                .then((res) => {
+                    expect(res.body).toEqual({
+                        updated_review: {
+                            review_id: 1,
+                            title: 'Agricola',
+                            category: 'euro game',
+                            designer: 'Uwe Rosenberg',
+                            owner: 'mallionaire',
+                            review_body: 'Farmyard fun!',
+                            review_img_url: 'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700',
+                            created_at: expect.any(String),
+                            votes: 3
+                        }
+                    });
+                });
+        });
+        test('responds with 200 and updated review - decrementing the vote', () => {
+            return request(app)
+                .patch('/api/reviews/1')
+                .send({ inc_votes: -2 })
+                .expect(200)
+                .then((res) => {
+                    expect(res.body).toEqual({
+                        updated_review: {
+                            owner: expect.any(String),
+                            title: expect.any(String),
+                            review_id: 1,
+                            review_body: expect.any(String),
+                            designer: expect.any(String),
+                            review_img_url: expect.any(String),
+                            category: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: -1
+                        }
+                    });
+                });
+        });
+        test('responds with 400 when given an invalid id', () => {
+            return request(app)
+                .patch('/api/reviews/49')
+                .send({ inc_votes: -2 })
+                .expect(400)
+                .then((res) => {
+                    const { body } = res;
+                    expect(body.msg).toBe('Invalid request');
+                });
+        });
+        test('responds with 400 when given an invalid id type', () => {
+            return request(app)
+                .patch('/api/reviews/string')
+                .send({ inc_votes: -2 })
+                .expect(400)
+                .then((res) => {
+                    const { body } = res;
+                    expect(body.msg).toBe('Bad request');
+                });
+        });
+
+    })
+
 })
