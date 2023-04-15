@@ -1,6 +1,6 @@
 const express = require('express')
 const { handleCustomErrors, PSQL400Errors, handleServerErrors } = require('./index')
-const { getAllCategories, getReviewById, getReviews, getComments, postComments,patchVotes } = require('./controllers/controllers')
+const { getAllCategories, getReviewById, getReviews, getComments, postComments, patchVotes, deleteComment } = require('./controllers/controllers')
 
 const cors = require('cors');
 
@@ -16,6 +16,7 @@ app.get('/api/reviews', getReviews)
 app.get('/api/reviews/:review_id/comments', getComments)
 app.post('/api/reviews/:review_id/comments', postComments)
 app.patch('/api/reviews/:review_id', patchVotes)
+app.delete('/api/comments/:comment_id', deleteComment)
 
 
 // Post 

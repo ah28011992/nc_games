@@ -241,13 +241,13 @@ describe('app', () => {
                 .then((res) => {
                     expect(res.body).toEqual({
                         updated_review: {
-                            owner: expect.any(String),
-                            title: expect.any(String),
                             review_id: 1,
-                            review_body: expect.any(String),
-                            designer: expect.any(String),
-                            review_img_url: expect.any(String),
-                            category: expect.any(String),
+                            title: 'Agricola',
+                            category: 'euro game',
+                            designer: 'Uwe Rosenberg',
+                            owner: 'mallionaire',
+                            review_body: 'Farmyard fun!',
+                            review_img_url: 'https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700',
                             created_at: expect.any(String),
                             votes: -1
                         }
@@ -276,5 +276,27 @@ describe('app', () => {
         });
 
     })
+
+    describe('DELETE /api/comments/:comment_id', () => {
+        test('responds with 204, no content and deletes the given comment', () => {
+            return request(app).delete('/api/comments/1').expect(204);
+        });
+        test('responds with 404 when given a non existent comment id', () => {
+            return request(app)
+                .delete('/api/comments/49')
+                .expect(404)
+                .then((result) => {
+                    expect(result.body.msg).toEqual('Not found');
+                });
+        });
+        test('responds with 400 when given an invalid id type', () => {
+            return request(app)
+                .delete('/api/comments/nonsense')
+                .expect(400)
+                .then((res) => {
+                    expect(res.body.msg).toEqual('Please provide a valid comment_id');
+                });
+        });
+    });
 
 })

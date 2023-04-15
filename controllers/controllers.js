@@ -1,9 +1,9 @@
-const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, selectComments, addComments, addCommentByReviewId, updateVotes } = require('../models/models')
+const { fetchAllCategories, getReviewById, selectReviewById, selectAllReviews, selectComments, addComments, addCommentByReviewId, updateVotes, deleteComment, selectComment } = require('../models/models')
 //1. '/api/categories'
 exports.getAllCategories = (req, res, next) => {
     fetchAllCategories()
         .then((categories) => {
-           
+
             res.status(200).send(categories);
 
         })
@@ -80,9 +80,16 @@ exports.patchVotes = (req, res, next) => {
     const { inc_votes } = req.body;
     updateVotes(review_id, inc_votes)
         .then((response) => {
-            console.log(response)
-            
             res.status(200).send({ updated_review: response });
+        })
+        .catch((err) => next(err));
+};
+
+exports.deleteComment = (req, res, next) => {
+    const { comment_id } = req.params;
+    selectComment(comment_id)
+        .then(() => {
+            res.status(204).send();
         })
         .catch((err) => next(err));
 };
