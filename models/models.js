@@ -131,7 +131,6 @@ exports.selectComment = (comment_id) => {
             msg: "Please provide a valid comment_id",
         });
     }
-
     return db
         .query(`SELECT * FROM comments WHERE comment_id = $1;`, [comment_id])
         .then((result) => {
@@ -146,4 +145,11 @@ exports.selectComment = (comment_id) => {
                 ]);
             }
         });
+};
+
+exports.fetchUsers = () => {
+  return  db.query(`SELECT * FROM users;`).then((result) => {
+        console.log( result.rows)
+        return result.rows;
+    });
 };
