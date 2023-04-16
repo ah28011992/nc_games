@@ -14,7 +14,7 @@ afterAll(() => {
 });
 
 describe('app', () => {
-    describe("/api/categories", () => {
+    describe("GET /api/categories", () => {
         it("200: responds with an array of categories", () => {
             return request(app)
                 .get("/api/categories")
@@ -71,7 +71,7 @@ describe('app', () => {
                 });
         });
 
-        describe('/api/reviews', () => {
+        describe('GET /api/reviews', () => {
             test('responds with 200 and an array of reviews', () => {
                 return request(app)
                     .get('/api/reviews')
@@ -298,5 +298,22 @@ describe('app', () => {
                 });
         });
     });
+    describe("GET /api/users", () => {
 
-})
+        test("200: responds with an array of users", () => {
+            return request(app)
+                .get("/api/users")
+                .then((res) => {
+                    expect(Array.isArray(res.body.users)).toBe(true);
+                    expect(res.body.users).toHaveLength(4);
+                    res.body.users.forEach((user) => {
+                        expect(user).toHaveProperty("username");
+                        expect(user).toHaveProperty("avatar_url");
+                        expect(user).toHaveProperty("name");
+                    });
+                });
+        });
+    });
+});
+
+
