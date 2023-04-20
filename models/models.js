@@ -14,13 +14,13 @@ exports.fetchAllCategories = () => {
 
 exports.selectReviewById = (id) => {
 
-    return db.query('SELECT * FROM reviews WHERE review_id = $1;', [id]).then((result) => {
+    return db.query('SELECT *, CAST((SELECT COUNT(*) FROM comments WHERE comments.review_id = reviews.review_id) AS INTEGER) as comment_count FROM reviews WHERE review_id = $1;', [id]).then((result) => {
         if (result.rows.length === 0) {
             return Promise.reject({
                 status: 404, msg: 'No review exists with that ID'
             })
         } else {
-
+            console.log(result.rows[0])
             return result.rows[0]
         }
     })
@@ -32,17 +32,13 @@ exports.selectReviewById = (id) => {
 
 
 //3.  /api/reviews'
-
 exports.selectAllReviews = () => {
-
     return db.query(`
         SELECT reviews.review_id, owner, title, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON comments.review_id = reviews.review_id GROUP BY reviews.review_id ORDER BY reviews.created_at DESC;`)
         .then((reviews) => {
             return reviews.rows
-
-
         });
-};
+}
 
 
 4.// /api/reviews /: review_id / comments
@@ -148,8 +144,8 @@ exports.selectComment = (comment_id) => {
 };
 
 exports.fetchUsers = () => {
-  return  db.query(`SELECT * FROM users;`).then((result) => {
-        console.log( result.rows)
+    return db.query(`SELECT * FROM users;`).then((result) => {
+        console.log(result.rows)
         return result.rows;
     });
 };

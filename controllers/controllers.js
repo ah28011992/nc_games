@@ -31,14 +31,14 @@ exports.getReviewById = (req, res, next) => {
 //3. /api/reviews', 
 
 exports.getReviews = (req, res, next) => {
-    selectAllReviews()
-        .then((reviews) => {
-            res.status(200).send({ reviews });
-        })
+    const { sort_by, order, category } = req.query;
+    selectAllReviews(sort_by, order, category).then((reviews) => {
+        res.status(200).send({ reviews });
+    })
         .catch((err) => {
             next(err);
         });
-}
+};
 //GET
 // 4. /api/reviews/:review_id/comments
 
@@ -95,7 +95,7 @@ exports.deleteComment = (req, res, next) => {
 };
 
 exports.getUsers = (req, res, next) => {
-   
+
     fetchUsers()
         .then((users) => {
             console.log(users.body)
