@@ -58,7 +58,7 @@ describe('app', () => {
                         category: expect.any(String),
                         created_at: expect.any(String),
                         votes: expect.any(Number),
-
+                       
                     });
                 })
         });
@@ -105,6 +105,7 @@ describe('app', () => {
                         expect(reviews).toBeSortedBy('created_at', { 'descending': true });
                     });
             });
+           
 
         })
         describe('GET /api/reviews/:review_id/comments', () => {
